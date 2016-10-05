@@ -1,17 +1,21 @@
 import React from "react";
-import {Miss, Match} from "react-router";
+import {Miss, Match, Link} from "react-router";
+import routeList from "routes!./pages/Home";
 
 export default class App extends React.Component {
 
   componentDidMount() {
-    console.log("Mounted App");
+    console.log("routeList", routeList);
   }
 
   render() {
     return (
       <div>
-        <Match pattern="/hello" render={() => <div>Hello!</div>}/>
-        <Match pattern="/world" render={() => <div>World!</div>}/>
+        <Link to="/">Home</Link>
+        <Link to="/about/">About</Link>
+        {routeList.map(({path, comp}) => (
+          <Match pattern={path} exactly component={comp}/>
+        ))}
         <Miss render={() => <div>no such page :(</div>}/>
       </div>
     );

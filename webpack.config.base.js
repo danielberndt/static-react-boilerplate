@@ -2,11 +2,7 @@ const webpack = require("webpack");
 const StaticSiteGeneratorPlugin = require("static-site-generator-webpack-plugin");
 const path = require("path");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-
-const paths = [
-  "/hello/",
-  "/world/"
-];
+const routeLoader = require("./web_loaders/routes-loader");
 
 module.exports = function(env) {
   const isDev = env === "dev";
@@ -86,9 +82,12 @@ module.exports = function(env) {
     },
 
     plugins: [
+      new webpack.DefinePlugin(Object.assign(envVars, {__DEV__: isDev})),
       ...(isProd ? [
-        new webpack.DefinePlugin(envVars),
-        new StaticSiteGeneratorPlugin("generate-html", paths),
+        new StaticSiteGeneratorPlugin(
+          "generate-html",
+          routeLoader.getRoutes("src/pages/Home.js").map(d => d.path)
+        ),
         new webpack.optimize.OccurrenceOrderPlugin(),
         new webpack.optimize.DedupePlugin(),
         new webpack.optimize.UglifyJsPlugin({
